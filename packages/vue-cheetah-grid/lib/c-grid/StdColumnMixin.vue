@@ -67,6 +67,13 @@ export default {
     message: {
       type: [Object, String, Function],
       default: undefined
+    },
+    /**
+     * Defines a columnOption
+     */
+     columnOption: {
+      type: [Object, String, Function, Array],
+      default: null,
     }
   },
   data () {

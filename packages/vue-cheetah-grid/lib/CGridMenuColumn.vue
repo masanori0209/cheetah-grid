@@ -127,7 +127,7 @@ export default {
           style: (...args) => {
             let style = this.columnStyle
             if (typeof style === 'function') {
-              style = style(...args)
+              style = style(...args, this.columnOption)
             }
             if (
               isDisabledRecord(this.disabled, ...args) ||

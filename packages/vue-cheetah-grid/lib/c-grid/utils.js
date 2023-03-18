@@ -1,4 +1,5 @@
 import * as cheetahGrid from 'cheetah-grid'
+// import * as cheetahGrid from "../../../cheetah-grid";
 
 export { cheetahGrid }
 
@@ -94,6 +95,8 @@ export function normalizeAction (action) {
       })
     } else if (typeof action.actionName === 'string') {
       action = new cheetahGrid.columns.action[action.actionName](action.option)
+    } else if (typeof action === "object") {
+      action = new cheetahGrid.columns.action[action.actionName](action.option)
     }
   }
   return action
@@ -120,7 +123,20 @@ export function resolveProxyComputedProps (propName) {
     const vm = this
     const proxyName = `$_CGridColumn_${propName}Proxy`
     const prop = vm[propName]
-    return typeof prop === 'function' ? vm[proxyName] : prop
+    if (typeof prop === "function") {
+      return vm[proxyName];
+    } else if (typeof prop === "object" && propName === "field") {
+      return {
+        get: (...args) => {
+          return prop.get(...args, this.columnOption);
+        },
+        set: (...args) => {
+          return prop.set(...args, this.columnOption);
+        },
+      };
+    } else {
+      return typeof prop === "function" ? vm[proxyName] : prop;
+    }
   }
 }
 
@@ -129,7 +145,7 @@ export function resolveProxyPropsMethod (propName) {
     const vm = this
     const prop = vm[propName]
 
-    return typeof prop === 'function' ? prop(...args) : undefined
+    return typeof prop === 'function' ? prop(...args, this.columnOption) : undefined
   }
 }
 
